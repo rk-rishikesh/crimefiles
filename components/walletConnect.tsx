@@ -30,22 +30,29 @@ export const WalletConnect = () => {
                                 userSelect: 'none',
                             },
                         })}
+                        className='flex justify-center items-center'
                     >
                         {(() => {
                             if (!connected) {
                                 return (
-                                    <button onClick={openConnectModal} type="button">
-                                        <div className="text-black font-funnel-display items-center inline-flex bg-white border-2 border-black duration-200 ease-in-out focus:outline-none hover:bg-black hover:shadow-none hover:text-white justify-center rounded-[20px] shadow-[5px_5px_black] text-center transform transition w-full lg:px-8 lg:py-2 lg:text-xl px-8 py-2">
-                                            Connect Wallet
-                                        </div>
-                                    </button>
+                                    <div className='flex fixed bottom-10 justify-center items-center'>
+                                        <button onClick={openConnectModal} type="button">
+                                            <div className="text-white font-funnel-display">
+                                                _ CONNECT WALLET _
+                                            </div>
+                                        </button>
+                                    </div>
+
+
                                 );
                             }
                             if (chain.unsupported) {
                                 return (
-                                    <button onClick={openChainModal} className="text-black items-center inline-flex bg-white border-2 border-black duration-200 ease-in-out focus:outline-none hover:bg-black hover:shadow-none hover:text-white justify-center rounded-[20px] shadow-[5px_5px_black] text-center transform transition w-full lg:px-8 lg:py-2 lg:text-xl px-8 py-2">
-                                        Wrong network
-                                    </button>
+                                    <div className='flex fixed bottom-10 justify-center items-center'>
+                                        <button onClick={openChainModal} type="button">
+                                            _ WRONG NETWORK _
+                                        </button>
+                                    </div>
                                 );
                             }
                         })()}

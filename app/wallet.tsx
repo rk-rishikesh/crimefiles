@@ -2,7 +2,7 @@ import { WalletConnect } from "@/components/walletConnect";
 export default function Wallet() {
 
   return (
-    <div className="w-full min-h-screen bg-blue-pattern text-white">
+    <div className="w-full min-h-screen bg-[#0b0608] text-white">
       <video
         className="absolute inset-0 h-full w-full object-cover"
         src="/assets/background/home.mp4"

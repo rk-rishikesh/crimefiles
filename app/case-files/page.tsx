@@ -9,36 +9,38 @@ export default function CaseFilesIndexPage() {
     const cases = getCases();
     const { isConnected } = useAccount();
 
-
     if (!isConnected) {
         return <Wallet />;
     }
+
     else {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-[#0b0c10] via-[#121418] to-[#0b0c10] text-zinc-100">
+            <div className="w-full min-h-screen text-white">
+
                 <video
-                    className="fixed inset-0 w-full h-full object-cover z-0"
-                    src="/assets/background/home.mp4"
+                    className="absolute inset-0 h-full w-full object-cover"
+                    src="/case-videos/1.mp4"
                     autoPlay
                     muted
                     loop
                     playsInline
                 />
-                <div className="relative z-10 max-w-7xl mx-auto px-4 py-12 md:py-20">
-                    <div className="mb-10 md:mb-14">
-                        <div className="relative z-10 flex h-full items-center justify-center text-center -mt-16">
-                            <div>
-                                <Image src="/assets/logo.svg" alt="Home" width={500} height={500} />
-                                <p className="mt-3 max-w-3xl text-zinc-400 font-funnel-display">
-                                    Pick a file. Read the brief. Follow the hints. Then name your prime suspect.
-                                </p>
-                            </div>
-                        </div>
 
-                    </div>
-
+                <div className="fixed left-0 z-10 w-full h-full">
+                    <img
+                        className="z-10 h-screen"
+                        src="/assets/background/caseBg.svg"
+                        alt="caseBg"
+                    />
+                </div>
+                
+                <Link href="/case-files/1" className="absolute bottom-10 right-10 z-20 cursor-pointer text-white px-4 py-2 rounded-md text-3xl font-funnel-display">
+                    _ Open Case File _
+                </Link>
+                {/* <div className="relative z-10 max-w-7xl mx-auto px-4 py-12 md:py-20">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 pt-8">
-                        {cases.map((c, idx) => (
+
+                        {/* {cases.map((c, idx) => (
                             <Link key={c.id} href={`/case-files/${c.id}`} className="group block">
                                 <section className="relative flex flex-col items-center justify-center w-full h-64">
                                     <div className="relative w-60 h-40 cursor-pointer origin-bottom [perspective:1500px] z-50">
@@ -55,10 +57,11 @@ export default function CaseFilesIndexPage() {
                                     </div>
                                 </section>
                             </Link>
-                        ))}
+                        ))} 
+
                     </div>
 
-                </div>
+                </div> */}
             </div>
         );
     }
