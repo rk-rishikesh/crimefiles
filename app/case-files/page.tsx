@@ -32,8 +32,8 @@ export default function CaseFilesIndexPage() {
                         src="/assets/background/caseBg.svg"
                         alt="caseBg"
                     />
+                    <div className="absolute top-0 left-0 text-2xl font-funnel-display text-white p-8 z-30">CRIME FILES</div>
                 </div>
-                
                 <Link href="/case-files/1" className="absolute bottom-10 right-10 z-20 cursor-pointer text-white px-4 py-2 rounded-md text-3xl font-funnel-display">
                     _ Open Case File _
                 </Link>

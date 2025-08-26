@@ -20,8 +20,16 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
     const [currentSuspectIndex, setCurrentSuspectIndex] = useState<number>(0);
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
     const [touchEndX, setTouchEndX] = useState<number | null>(null);
+    const [isInterrogationOpen, setIsInterrogationOpen] = useState<boolean>(false);
+    const [chatInput, setChatInput] = useState<string>("");
+    const [messages, setMessages] = useState<Array<{ sender: "you" | "suspect"; text: string }>>([]);
 
     const TabNames = ["Case File", "Hints", "Suspects"];
+
+    const selectedSuspect = useMemo(() => {
+        if (!caseFile) return undefined;
+        return caseFile.suspects.find((s) => s.id === selectedSuspectId);
+    }, [caseFile, selectedSuspectId]);
 
     const handlePrev = () => {
         if (!caseFile) return;
@@ -53,6 +61,45 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
         }
         setTouchStartX(null);
         setTouchEndX(null);
+    };
+
+    const openInterrogation = (suspectId: string) => {
+        setSelectedSuspectId(suspectId);
+        setIsInterrogationOpen(true);
+        setMessages([
+            { sender: "suspect", text: "You think I did it? Ask your questions." },
+        ]);
+        setChatInput("");
+    };
+
+    const closeInterrogation = () => {
+        setIsInterrogationOpen(false);
+    };
+
+    const generateSuspectReply = (): string => {
+        if (!selectedSuspect) return "I have nothing to say.";
+        switch (selectedSuspect.id) {
+            case "s1":
+                return "I was preparing the audit, not touching the vault.";
+            case "s2":
+                return "Tokens were rotated correctly. Check the logs.";
+            case "s3":
+                return "I'm just an intern. I formatted reports, nothing more.";
+            default:
+                return "You’ll need more than accusations.";
+        }
+    };
+
+    const handleSendMessage = () => {
+        const trimmed = chatInput.trim();
+        if (!trimmed) return;
+        const userMsg = { sender: "you" as const, text: trimmed };
+        setMessages((prev) => [...prev, userMsg]);
+        setChatInput("");
+        const reply = generateSuspectReply();
+        setTimeout(() => {
+            setMessages((prev) => [...prev, { sender: "suspect", text: reply }]);
+        }, 300);
     };
     const handleEncrypt = async () => {
         if (submitted) {
@@ -196,11 +243,10 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
                     )}
 
                     {activeTab === 3 && (
-
                         <>
                             <div
                                 className="fixed right-5">
-                                <Image className="rounded-full" src="/suspect.png" alt="decor" width={450} height={450} />
+                                <Image className="rounded-full mt-16" src={caseFile.suspects[currentSuspectIndex]?.image || "/suspect.png"} alt="suspect" width={450} height={450} />
                             </div>
                             <div className="fixed bottom-5">
                                 <div className="relative select-none flex flex-col justify-center items-center">
@@ -236,18 +282,18 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
                                                                             <div className="text-[12px] tracking-[0.3em] uppercase text-[#6a7190]">Occupation</div>
                                                                         </div>
                                                                         <div>
-                                                                            <div className="text-[12px] tracking-[0.3em] uppercase text-[#6a7190]">Sex</div>
+                                                                            <div className="text-[12px] tracking-[0.3em] uppercase text-[#6a7190]">Age</div>
                                                                         </div>
                                                                         <div>
-                                                                            <div className="text-[12px] tracking-[0.3em] uppercase text-[#6a7190]">Age</div>
+                                                                            <div className="text-[12px] tracking-[0.3em] uppercase text-[#6a7190]">Gender</div>
                                                                         </div>
                                                                     </div>
                                                                     <div className="mt-2 border-t-2 border-dashed border-[#2b2f6a]" />
                                                                     <div className="mt-4 grid grid-cols-4">
-                                                                        <div className="text-2xl font-funnel-display text-[#2b2f6a]">Investigator</div>
-                                                                        <div className="text-2xl font-funnel-display text-[#2b2f6a]">Male</div>
-                                                                        <div className="text-2xl font-funnel-display text-[#2b2f6a]">42</div>
-                                                                        <div onClick={() => setSelectedSuspectId(suspect.id)} className="cursor-pointer text-2xl font-funnel-display text-[#2b2f6a]"> _Select Suspect_</div>
+                                                                        <div className="text-2xl font-funnel-display text-[#2b2f6a]">{suspect.occupation}</div>
+                                                                        <div className="text-2xl font-funnel-display text-[#2b2f6a]">{suspect.age}</div>
+                                                                        <div className="text-2xl font-funnel-display text-[#2b2f6a]">{suspect.gender}</div>
+                                                                        <div onClick={() => openInterrogation(suspect.id)} className="cursor-pointer text-2xl font-funnel-display text-[#2b2f6a]"> _Interrogate_</div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -307,6 +353,50 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
 
                     )}
                 </section>
+                {isInterrogationOpen && (
+                    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center p-4">
+                        <div className="w-full max-w-2xl bg-white text-[#1e2a42] border border-[#2b2f6a] shadow-xl">
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-[#2b2f6a]/30">
+                                <div className="font-funnel-display text-xl text-[#2b2f6a]">
+                                    {selectedSuspect?.name ? `Interrogating ${selectedSuspect.name}` : "Interrogation"}
+                                </div>
+                                <button
+                                    onClick={closeInterrogation}
+                                    aria-label="Close interrogation"
+                                    className="text-[#2b2f6a] hover:opacity-80"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                            <div className="h-80 md:h-96 overflow-y-auto px-4 py-3 space-y-3 bg-white">
+                                {messages.map((m, idx) => (
+                                    <div key={idx} className={`flex ${m.sender === "you" ? "justify-end" : "justify-start"}`}>
+                                        <div className={`${m.sender === "you" ? "bg-[#2b2f6a] text-white" : "bg-zinc-100 text-[#1e2a42]"} px-3 py-2 rounded-md max-w-[80%]`}>
+                                            <div className="text-xs opacity-70 mb-0.5">{m.sender === "you" ? "You" : selectedSuspect?.name || "Suspect"}</div>
+                                            <div className="font-funnel-display">{m.text}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="flex items-center gap-2 px-4 py-3 border-t border-[#2b2f6a]/30 bg-white">
+                                <input
+                                    value={chatInput}
+                                    onChange={(e) => setChatInput(e.target.value)}
+                                    onKeyDown={(e) => { if (e.key === "Enter") handleSendMessage(); }}
+                                    placeholder="Ask a question..."
+                                    className="flex-1 border border-[#2b2f6a]/40 px-3 py-2 outline-none"
+                                />
+                                <button
+                                    onClick={handleSendMessage}
+                                    disabled={!chatInput.trim()}
+                                    className={`h-10 px-4 border border-[#2b2f6a] text-[#2b2f6a] ${!chatInput.trim() ? "opacity-50 cursor-not-allowed" : "hover:bg-[#2b2f6a]/10"}`}
+                                >
+                                    Send
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </main>
     );

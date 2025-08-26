@@ -37,7 +37,7 @@ export const WalletConnect = () => {
                                 return (
                                     <div className='flex fixed bottom-10 justify-center items-center'>
                                         <button onClick={openConnectModal} type="button">
-                                            <div className="text-white font-funnel-display">
+                                            <div className="font-funnel-display text-xl fixed bottom-20 right-50">
                                                 _ CONNECT WALLET _
                                             </div>
                                         </button>
@@ -49,7 +49,7 @@ export const WalletConnect = () => {
                             if (chain.unsupported) {
                                 return (
                                     <div className='flex fixed bottom-10 justify-center items-center'>
-                                        <button onClick={openChainModal} type="button">
+                                        <button onClick={openChainModal} type="button" className="font-funnel-display text-xl fixed bottom-20 right-50">
                                             _ WRONG NETWORK _
                                         </button>
                                     </div>
